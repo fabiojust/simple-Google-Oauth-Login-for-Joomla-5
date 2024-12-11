@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="system" method="upgrade">
+    <name>Simple Google Oauth Login</name>
+    <author>Fabio Rigoni</author>
+    <creationDate>2024-12-07</creationDate>
+    <version>1.0.0</version>
+    <description>Plugin semplice per l'accesso tramite Google OAuth.</description>
+    <files>
+        <filename plugin="googlelogin">googlelogin.php</filename>
+        <filename>index.html</filename>
+    </files>
+    <config>
+        <fields name="params">
+            <fieldset name="basic" addfieldpath="plugins/system/googlelogin">
+                <field name="clientid" type="text" default=""
+                       description="Client ID"
+                       label="Client ID"
+                       />
+                <field name="clientsecret" type="text" default=""
+                       description="Client secret"
+                       label="Client secret"
+                       />
+                <field
+                    name="callback_url"
+                    type="callbackurl"
+                    label="Callback URL"
+                    description="Callback URL"
+                    value="index.php?google-login=1"
+                    readonly="true"
+                    class="readonly"
+                    />
+            </fields>
+        </config>
+
+</extension>
