@@ -1,9 +1,11 @@
-
 <?php
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Uri\Uri;
+
+
 
 class PlgSystemGoogleLogin extends CMSPlugin
 {
@@ -11,7 +13,36 @@ class PlgSystemGoogleLogin extends CMSPlugin
 
     public function onAfterInitialise()
     {
+        $app = Factory::getApplication();
+
+        // Verifica se l'utente è loggato
+        // $user = Factory::getUser();
+        // if (!$user->guest) {
+        //     return; // Interrompe l'esecuzione del plugin se l'utente è loggato
+        // }
+        //
+        //
+        // // Verifica se è una richiesta di Phoca Download
+        // $option = $app->input->getCmd('option');
+        // $view = $app->input->getCmd('view');
+        // $task = $app->input->getCmd('task');
+        //
+        // if ($option === 'com_phocadownload' && in_array($task, ['download', 'file'])) {
+        //     return; // Escludi il plugin durante il download di file
+        // }
+        //
+        //
+        // // Ottieni l'URL corrente
+        // $currentPath = Uri::getInstance()->getPath();
+        //
+        // // Controlla se l'URL inizia con "intro/"
+        // if (strpos($currentPath, '/intro/') === 0) {
+        //     return; // Escludi il plugin per le pagine che iniziano con "intro/"
+        // }
+
+
         $input = Factory::getApplication()->input;
+
 
         // Controlla se il parametro 'google-login' è presente
         if ($input->get('google-login', false)) {
@@ -25,19 +56,20 @@ class PlgSystemGoogleLogin extends CMSPlugin
 
         // Controlla se il parametro 'google-check' è presente
         if ($input->get('google-check', false)) {
+            ob_start();
             include 'check.php';
+            ob_end_clean();
         }
-
-
     }
 
     private function handleGoogleLogin()
     {
 
        $google_oauth_redirect_uri = JURI::base() . 'index.php?google-login=1';
-        $google_oauth_client_id = $this->params->get('clientid');
-        $google_oauth_client_secret = $this->params->get('clientsecret');
+        $google_oauth_client_id = $this->params->get('plggoogleloginclientid');
+        $google_oauth_client_secret = $this->params->get('plggoogleloginclientsecret');
        // $redirectpage = $this->params->get('redirectpage');
+        $redirectpage = 'https://www.galileivr.edu.it/it/accesso';
         $google_oauth_version = 'v3';
 
         if (isset($_GET['code'])) {
@@ -82,7 +114,9 @@ class PlgSystemGoogleLogin extends CMSPlugin
                    $_SESSION['google_picture'] = isset($profile['picture']) ? $profile['picture'] : '';
                    // Redirect to profile page
                    // header('Location: profile.php');
-                   header('Location: index.php?google-check=1');
+                   // header('Location: index.php?google-check=1');
+                   $this->app->redirect('index.php?google-check=1');
+
                    exit;
                 }
             }
@@ -96,23 +130,20 @@ class PlgSystemGoogleLogin extends CMSPlugin
                 'access_type' => 'offline',
                 'prompt' => 'consent'
             ];
-            header('Location: https://accounts.google.com/o/oauth2/auth?' . http_build_query($params));
+           // header('Location: https://accounts.google.com/o/oauth2/auth?' . http_build_query($params));
+            $this->app->redirect('https://accounts.google.com/o/oauth2/auth?' . http_build_query($params));
             exit;
         }
     }
     private function handleGoogleLogout()
     {
         // Initialize the session
-        session_start();
+        //session_start();
+        $session = Factory::getSession();
+
         // Destroy the session
         session_destroy();
         // Redirect to the login page
         $this->app->redirect('https://www.galileivr.edu.it/it/accesso');
     }
-
-
 }
-
-?>
-
-

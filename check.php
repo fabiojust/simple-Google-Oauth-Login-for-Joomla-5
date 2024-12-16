@@ -2,28 +2,29 @@
 
 
 
-// esperimento
-
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User\UserHelper;
+
+// Verifica se l'utente è loggato
+$user = Factory::getUser();
+if (!$user->guest) {
+    return; // Interrompe l'esecuzione del plugin se l'utente è loggato
+}
+
+
 
 // Carica il database di Joomla
 $db = JFactory::getDbo();
 $query = $db->getQuery(true);
 
-session_start();
+$session = Factory::getSession();
 
 // Retrieve session variables
-$google_loggedin = $_SESSION['google_loggedin'];
-$google_email = $_SESSION['google_email'];
-$google_name = $_SESSION['google_name'];
-$google_picture = $_SESSION['google_picture'];
-
-// echo '<div class="profile-picture"><img src="'.$google_picture.'" alt="" width="100" height="100"></div>';
-// echo $google_name;
-// echo $google_email;
-// echo $google_loggedin;
+$google_loggedin = $_SESSION['google_loggedin'] ?? null;
+$google_email = $_SESSION['google_email'] ?? null;
+$google_name = $_SESSION['google_name'] ?? null;
+$google_picture = $_SESSION['google_picture'] ?? null;
 
 function checkUserByEmail($email)
 {
@@ -77,31 +78,23 @@ function autoLoginByEmail($email)
         $session = Factory::getSession();
         $session->set('user', $instance);
 
-        // Aggiorna la foto profilo
-       // updateUserProfilePicture($user->id, $profile['picture']);
-       // updateUserProfilePicture($user->id, $google_picture);
-
         // Reindirizza l'utente a una pagina specifica
         $app->redirect(''); // Cambia con la tua destinazione
     } else {
         // Utente non trovato
-        echo 'Utente non trovato per questa email.';
+        // 'Utente non trovato per questa email.';
+        Factory::getApplication()->enqueueMessage('Utente non trovato per questa email.', 'error');
     }
 }
-
-
-
 
 
 // Esempio di utilizzo
 $emailToCheck = $google_email;
 if (checkUserByEmail($emailToCheck)) {
-    echo "L'utente con l'email $emailToCheck esiste.";
     autoLoginByEmail($emailToCheck);
 
 } else {
-    echo "L'utente con l'email $emailToCheck non esiste.";
+    return true;
 }
-
 
 ?>

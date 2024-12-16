@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="system" method="upgrade">
-    <name>Simple Google Oauth Login</name>
+    <name>PLG_SYSTEM_GOOGLELOGIN</name>
     <author>Fabio Rigoni</author>
     <creationDate>2024-12-07</creationDate>
     <version>1.0.0</version>
@@ -12,11 +12,11 @@
     <config>
         <fields name="params">
             <fieldset name="basic" addfieldpath="plugins/system/googlelogin">
-                <field name="clientid" type="text" default=""
+                <field name="plggoogleloginclientid" type="text" default=""
                        description="Client ID"
                        label="Client ID"
                        />
-                <field name="clientsecret" type="text" default=""
+                <field name="plggoogleloginclientsecret" type="text" default=""
                        description="Client secret"
                        label="Client secret"
                        />
@@ -29,6 +29,7 @@
                     readonly="true"
                     class="readonly"
                     />
+                </fieldset>
             </fields>
         </config>
 
